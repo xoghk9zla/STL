@@ -1,0 +1,16 @@
+#include <iostream>
+
+using namespace std;
+
+// int형 변수를 동적할당하고 값을 바꾸기
+
+void main(){
+	int* i_Num = new int{ 100 };
+
+	*i_Num = 200;
+
+	cout << *i_Num << endl;
+
+	delete i_Num;
+
+}

@@ -1,0 +1,33 @@
+#include <iostream>
+
+using namespace std;
+
+class CAnimal{
+public:
+	virtual void speak() = 0;	// 순수 가상 함수
+};
+
+class CDog : public CAnimal{
+public:
+	virtual void speak(){
+		cout << "개" << endl;
+	}
+};
+
+class CBird : public CAnimal{
+public:
+	virtual void speak(){
+		cout << "새" << endl;
+	}
+};
+
+void main(){
+	CAnimal* ap[3];
+	ap[0] = new CDog;
+	ap[1] = new CBird;
+	ap[2] = new CDog;
+
+	for (int i = 0; i < 3; ++i){
+		ap[i]->speak();
+	}
+}

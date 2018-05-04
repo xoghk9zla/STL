@@ -1,0 +1,20 @@
+#include <iostream>
+
+using namespace std;
+
+template <class T>
+
+void change(T& x, T& y){
+	T temp = x;
+	x = y;
+	y = temp;
+}
+void main(){
+	int x{ 5 }, y{ 10 };
+
+	cout << "¹Ù²î±â Àü -> x: " << x << ", " << "y: " << y << endl;
+
+	change(x, y);
+
+	cout << "¹Ù²ï ÈÄ -> x: " << x << ", " << "y: " << y << endl;
+}
