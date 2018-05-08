@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// 2018. 1. STL 월 23, 화 56	5월 1일	(9주 2일차)
+// 2018. 1. STL 월 23, 화 56	5월 8일	(10주 2일차)
 // 
 // 5장 - 연관 컨테이너
 // set
@@ -32,7 +32,7 @@ public:
 	}
 	Model(const Model& m) :id(++gid) {
 		size = m.size;
-		data = new char[size];
+		data = new char[size];  
 		// 깊은 복사
 		memcpy(data, m.data, size);
 
