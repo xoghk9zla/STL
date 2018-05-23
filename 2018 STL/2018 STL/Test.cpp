@@ -1,8 +1,10 @@
 #include <iostream>
+#include <functional>
 #include <vector>
 #include <map>
-#include <string.h>
+#include <string>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -12,16 +14,14 @@ map<string, int> sort_by_word;
 map<int, string> word_frequency;
 
 void load();
-void show();
-void show_frequency();
 
-void main(){
+void main() {
 	// 1) 파일을 읽어 각 철자의 빈도수 표시
 	// 2) 가장 많이 출현한 단어순 출력
 	// 3) 길이가 가장 긴 단어 출력
 	load();
 
-	while (1){
+	while (1) {
 		system("cls");
 		cout << "1. 각 철자의 빈도수 출력 2. 가장 많이 출현한 단어순 출력" << endl;
 		int option;
@@ -41,39 +41,31 @@ void main(){
 			break;
 		}
 		system("pause");
-	}	
+	}
 }
 
 void load() {
-	char inputString[1000];
 
 	fstream in("이상한 나라의 앨리스.txt");
-	while (!in.eof()) {
-		in.getline(inputString, 128);
-		temp.emplace_back(inputString);
-	}
-	for (string d : temp) {
-		for (char c : d) {
-			spelling_frequency[c] ++;
-		}
-	}
-	in.close();
+	// 이 파일은 UTF-8 형식의 파일로 BOM(Byte order mark)이 기록되어 있다.
 
-	in.open("이상한 나라의 앨리스.txt");
-	while(in >> inputString) {
-		sort_by_word[inputString] ++;
+	char c;
+	in >> c >> c >> c; // BOM무시
+
+	map<string, int> simap;
+
+	string s;
+	while (in >> s) {
+		simap[s]++;	// cimap.operator[](c)
 	}
 
-	for (auto d : sort_by_word)
-		word_frequency[d.second] = d.first;
-}
+	// 가장 길이가 긴 단어는? (단어는 공백으로 분리됨)
+	// STL에서 가능하면 for loop를 사용하지 않는다.( 대신할 알고리즘이 있는 경우)
+	auto p = max_element(simap.begin(), simap.end(), [](const auto& a, const auto& b) {
+		return a.first < b.first;
+	});
+	if (p != simap.end())
+		cout << p->first << endl;
 
-void show() {
-	for (auto v : temp)
-		cout << v.c_str() << endl;
-}
-
-void show_frequency() {
-	for (auto& s : spelling_frequency)
-		cout << "[\t" << s.first << "\t]: " << s.second << endl;
+	system("pause");
 }
