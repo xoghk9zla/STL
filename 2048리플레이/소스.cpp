@@ -210,7 +210,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			ofstream out("test.txt");
 			for (int i = 0; i < 4; ++i) {
 				for (int j = 0; j < 4; ++j) {
-					out.write((const char*)board[i][j].val, sizeof(char*));
+					out.write((const char*)board[i][j].val, sizeof(int) * 16);
 				}
 			}
 
