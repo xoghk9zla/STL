@@ -201,27 +201,70 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			break;
 
 		case ID_SAVE: {	// 리플레이 저장 시작
-			/*vector<int> vecBoardData;
-			for (int i = 0; i < 4; ++i) {
-				for (int j = 0; j < 4; ++j) {
-					vecBoardData.emplace_back(board[i][j]);
-				}
-			}*/
 			ofstream out("test.txt");
 			for (int i = 0; i < 4; ++i) {
 				for (int j = 0; j < 4; ++j) {
-					out.write((const char*)board[i][j].val, sizeof(int) * 16);
+					out << board[i][j].val;
 				}
 			}
-
 			break;
 		}
 		case ID_STOP:	// 리플레이 저장 종료
 			break;
 
-		case ID_LOAD:	// 리플레이 불러와서 실행
-			break;
+		case ID_LOAD: {	// 리플레이 불러와서 실행
+			ifstream in("test.txt");
+			char c;
 
+			for (int i = 0; i < 4; ++i) {
+				for (int j = 0; j < 4; ++j) {
+					in >> c;
+					switch (c) {
+					case '0':
+						board[i][j].val = 0;
+						break;
+					case '2':
+						board[i][j].val = 2;
+						break;
+					case '4':
+						board[i][j].val = 4;
+						break;
+					case '8':
+						board[i][j].val = 8;
+						break;
+					case '16':
+						board[i][j].val = 16;
+						break;
+					case '32':
+						board[i][j].val = 32;
+						break;
+					case '64':
+						board[i][j].val = 64;
+						break;
+					case '128':
+						board[i][j].val = 128;
+						break;
+					case '256':
+						board[i][j].val = 256;
+						break;
+					case '512':
+						board[i][j].val = 512;
+						break;
+					case '1024':
+						board[i][j].val = 1024;
+						break;
+					case '2048':
+						board[i][j].val = 2048;
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			
+			InvalidateRect(hWnd, NULL, TRUE);
+			break;
+		}
 		default:
 			break;
 
