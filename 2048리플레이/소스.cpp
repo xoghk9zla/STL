@@ -22,6 +22,7 @@ struct Rect{
 };
 
 Rect board[4][4];	// 판
+int Score, Goal, Max;	// 현재 점수, 목표 점수, 최대 도달 블럭
 
 void NewGame();
 void MakeBlock();
@@ -69,13 +70,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 	static bool Move;	// 블록이 움직일 때 못 마우스 작동 못하게
 	static int x1, y1;	// 판위치 초기화용
 	static int Sx, Sy, Ex, Ey; // 마우스 드래그
-	static int a, b, cnt;	// 블록 생성용
-	static int score, Goal, Max;	// 현재 점수, 목표 점수, 최대 도달 블럭
+	static int a, b, cnt;	// 블록 생성용, 블럭 이동 횟수
 	static char buf[50];	// 게임 종료 시 현재 점수, 최대 도달 블럭을 출력하기 위한 문자열
 	switch (uMsg)
 	{
 	case WM_CREATE:
-		x1 = 50, y1 = 50, cnt = 0, score = 0, Goal = 2048, Max = 0, Move = TRUE;
+		x1 = 50, y1 = 50, cnt = 0, Score = 0, Goal = 2048, Max = 0, Move = TRUE;
 		for (int i = 0; i < 4; ++i){
 			for (int j = 0; j < 4; ++j){
 				board[i][j].left = x1, board[i][j].top = y1, board[i][j].right = x1 + 100, board[i][j].bottom = y1 + 100;
@@ -134,10 +134,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				DeleteDC(memdc);
 			}
 		}
-		wsprintf(buf, "점수: %d", score);
+		wsprintf(buf, "점수: %d", Score);
 		TextOut(hdc, 500, 100, buf, strlen(buf));
+		wsprintf(buf, "목표 점수: %d", Goal);
+		TextOut(hdc, 500, 125, buf, strlen(buf));
+		wsprintf(buf, "최대 도달 블럭: %d", Max);
+		TextOut(hdc, 500, 150, buf, strlen(buf));
+		
 		if (LoseCheck()){
-			wsprintf(buf, "점수: %d, 최고 블럭: %d", score, Max);
+			wsprintf(buf, "점수: %d, 최고 블럭: %d", Score, Max);
 			if (MessageBox(hWnd, buf, "게임 종료!", MB_OK) == IDOK){
 				PostQuitMessage(0);
 				return 0;
@@ -171,13 +176,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 		}
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
-
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_LEFT:
+			if(Move)
+				SetTimer(hWnd, LEFT, 200, NULL);
+			break;
+		case VK_RIGHT:
+			if (Move)
+				SetTimer(hWnd, RIGHT, 200, NULL);
+			break;
+		case VK_UP:
+			if (Move)
+				SetTimer(hWnd, UP, 200, NULL);
+			break;
+		case VK_DOWN:
+			if (Move)
+				SetTimer(hWnd, DOWN, 200, NULL);
+			break;
+		default:
+			break;
+		}
+		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
 		case ID_NEW:
 			NewGame();
-			InvalidateRect(hWnd, NULL, TRUE);
 			break;
 
 		case ID_END:
@@ -207,6 +233,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 					out << board[i][j].val;
 				}
 			}
+			out << endl;
+			out << Score;
+			out << endl;
+			out << Goal;
+			out << endl;
+			out << Max;
 			break;
 		}
 		case ID_STOP:	// 리플레이 저장 종료
@@ -215,7 +247,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 		case ID_LOAD: {	// 리플레이 불러와서 실행
 			ifstream in("test.txt");
 			char c;
-
+			string s;
+			// 파일 입출력으로 가져온 게임 판의 데이터를 int형으로 변환
 			for (int i = 0; i < 4; ++i) {
 				for (int j = 0; j < 4; ++j) {
 					in >> c;
@@ -260,8 +293,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 						break;
 					}
 				}
-			}
-			
+			} 
+
+			// 리플레이 저장이 시작 된 점수, 목표점수, 최대 도달 블럭을 가져옴
+			in >> Score;
+			in >> Goal;
+			in >> Max;
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
 		}
@@ -269,6 +306,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			break;
 
 		}
+		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 
 	case WM_TIMER:
@@ -280,7 +318,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 					KillTimer(hWnd, 2);
 					KillTimer(hWnd, 3);
 					KillTimer(hWnd, 4);
-					wsprintf(buf, "점수: %d, 최고 블럭: %d", score, Max);
+					wsprintf(buf, "점수: %d, 최고 블럭: %d", Score, Max);
 					if (MessageBox(hWnd, buf, "게임 종료!", MB_OK) == IDOK){
 						PostQuitMessage(0);
 						return 0;
@@ -299,7 +337,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 					}
 					if (board[i][j - 1].val == board[i][j].val){	// 블럭 합치기
 						board[i][j - 1].val += board[i][j].val;
-						score += board[i][j].val;
+						Score += board[i][j].val;
 						board[i][j].val = 0;
 					}
 				}
@@ -322,7 +360,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 					}
 					if (board[i][j + 1].val == board[i][j].val){
 						board[i][j + 1].val += board[i][j].val;
-						score += board[i][j].val;
+						Score += board[i][j].val;
 						board[i][j].val = 0;
 					}
 				}
@@ -345,7 +383,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 					}
 					else if (board[i - 1][j].val == board[i][j].val){
 						board[i - 1][j].val += board[i][j].val;
-						score += board[i][j].val;
+						Score += board[i][j].val;
 						board[i][j].val = 0;
 					}
 				}
@@ -369,7 +407,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 					}
 					else if (board[i + 1][j].val == board[i][j].val){
 						board[i + 1][j].val += board[i][j].val;
-						score += board[i][j].val;
+						Score += board[i][j].val;
 						board[i][j].val = 0;
 					}
 				}
@@ -405,6 +443,7 @@ void NewGame(){
 			board[i][j].val = 0;
 		}
 	}
+	Score = 0, Goal = 2048, Max = 0;
 	MakeBlock();
 	MakeBlock();
 }
