@@ -1,7 +1,8 @@
 #include <Windows.h>
 #include <math.h>
+#include <unordered_map>
+#include <string>
 #include <fstream>
-#include <vector>
 #include "resources.h"
 
 #define LEFT 1
@@ -23,6 +24,7 @@ struct Rect{
 
 Rect board[4][4];	// 판
 int Score, Goal, Max;	// 현재 점수, 목표 점수, 최대 도달 블럭
+unordered_multimap<int, int> replaydata;
 
 void NewGame();
 void MakeBlock();
@@ -227,78 +229,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			break;
 
 		case ID_SAVE: {	// 리플레이 저장 시작
-			ofstream out("test.txt");
-			for (int i = 0; i < 4; ++i) {
-				for (int j = 0; j < 4; ++j) {
-					out << board[i][j].val;
+			if (Move) {
+				ofstream out("test.txt");
+				for (int i = 0; i < 4; ++i) {
+					for (int j = 0; j < 4; ++j) {
+						out << board[i][j].val << " ";
+					}
 				}
+				out << Score << " " << Goal << " " << Max << endl;
 			}
-			out << endl;
-			out << Score;
-			out << endl;
-			out << Goal;
-			out << endl;
-			out << Max;
 			break;
 		}
 		case ID_STOP:	// 리플레이 저장 종료
+			if (Move) {
+
+
+			}
 			break;
 
 		case ID_LOAD: {	// 리플레이 불러와서 실행
-			ifstream in("test.txt");
-			char c;
-			string s;
-			// 파일 입출력으로 가져온 게임 판의 데이터를 int형으로 변환
-			for (int i = 0; i < 4; ++i) {
-				for (int j = 0; j < 4; ++j) {
-					in >> c;
-					switch (c) {
-					case '0':
-						board[i][j].val = 0;
-						break;
-					case '2':
-						board[i][j].val = 2;
-						break;
-					case '4':
-						board[i][j].val = 4;
-						break;
-					case '8':
-						board[i][j].val = 8;
-						break;
-					case '16':
-						board[i][j].val = 16;
-						break;
-					case '32':
-						board[i][j].val = 32;
-						break;
-					case '64':
-						board[i][j].val = 64;
-						break;
-					case '128':
-						board[i][j].val = 128;
-						break;
-					case '256':
-						board[i][j].val = 256;
-						break;
-					case '512':
-						board[i][j].val = 512;
-						break;
-					case '1024':
-						board[i][j].val = 1024;
-						break;
-					case '2048':
-						board[i][j].val = 2048;
-						break;
-					default:
-						break;
+			if (Move) {
+				ifstream in("test.txt");
+				string s;
+				// 파일 입출력으로 가져온 게임 판의 데이터를 int형으로 변환
+				for (int i = 0; i < 4; ++i) {
+					for (int j = 0; j < 4; ++j) {
+						in >> s;
+						board[i][j].val = atoi(s.c_str());
 					}
 				}
-			} 
-
-			// 리플레이 저장이 시작 된 점수, 목표점수, 최대 도달 블럭을 가져옴
-			in >> Score;
-			in >> Goal;
-			in >> Max;
+				// 리플레이 저장이 시작 된 점수, 목표점수, 최대 도달 블럭을 가져옴
+				in >> Score >> Goal >> Max;
+			}
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
 		}
