@@ -15,6 +15,11 @@
 #include "Model.h"
 #include "save.h"
 
+class Test {
+public:
+	int a[4][4];
+};
+
 using namespace std;
 //
 //template<class Iter>
@@ -25,7 +30,13 @@ void main() {
 	int* q = reinterpret_cast<int*>(2000);
 	cout << typeid(cin).name() << endl;
 	//cout << my_distance(p, q) << endl;
-	
+	int a[4][4] = { 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 };
+	vector<Test> temp;
+	temp.emplace_back(a);
+
+	for (auto d : temp)
+		cout << *d.a;
+
 	save();
 }
 

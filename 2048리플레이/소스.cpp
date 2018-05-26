@@ -1,14 +1,16 @@
 #include <Windows.h>
 #include <math.h>
-#include <unordered_map>
+#include <vector>
 #include <string>
 #include <fstream>
+#include <iterator>
 #include "resources.h"
 
 #define LEFT 1
 #define RIGHT 2
 #define UP 3
 #define DOWN 4
+#define REPLAY 5
 
 using namespace std;
 
@@ -22,9 +24,28 @@ struct Rect{
 	bool sel;
 };
 
+class Replay {
+public:
+	int dir;
+	int elapsed_time;
+	int random_position[2];
+	int block_val;
+
+public:
+	Replay() {}
+	Replay(int d, int e, int* r, int v): dir(d), elapsed_time(e), block_val(v){
+		random_position[0] = r[0];
+		random_position[1] = r[1];
+	}
+
+};
+
 Rect board[4][4];	// 판
 int Score, Goal, Max;	// 현재 점수, 목표 점수, 최대 도달 블럭
-unordered_multimap<int, int> replaydata;
+DWORD start, finish;
+Replay temp;
+bool playing;
+vector<Replay> replaydata;
 
 void NewGame();
 void MakeBlock();
@@ -77,7 +98,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 	switch (uMsg)
 	{
 	case WM_CREATE:
-		x1 = 50, y1 = 50, cnt = 0, Score = 0, Goal = 2048, Max = 0, Move = TRUE;
+		x1 = 50, y1 = 50, cnt = 0, Score = 0, Goal = 2048, Max = 0, Move = TRUE, playing = TRUE;
 		for (int i = 0; i < 4; ++i){
 			for (int j = 0; j < 4; ++j){
 				board[i][j].left = x1, board[i][j].top = y1, board[i][j].right = x1 + 100, board[i][j].bottom = y1 + 100;
@@ -164,43 +185,72 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			Ex = LOWORD(lParam);
 			Ey = HIWORD(lParam);
 
-			if (Sx > Ex && abs(Sx - Ex) > abs(Sy - Ey))
+			if (Sx > Ex && abs(Sx - Ex) > abs(Sy - Ey)) {
+				finish = GetTickCount();
+				temp.dir = LEFT;
+				temp.elapsed_time = finish - start;
+				//replaydata.emplace_back(LEFT, finish - start);
 				SetTimer(hWnd, LEFT, 200, NULL);
-
-			else if (Sx < Ex && abs(Sx - Ex) > abs(Sy - Ey))
+			}
+			else if (Sx < Ex && abs(Sx - Ex) > abs(Sy - Ey)) {
+				finish = GetTickCount();
+				temp.dir = RIGHT;
+				temp.elapsed_time = finish - start;
+				//replaydata.emplace_back(RIGHT, finish - start);
 				SetTimer(hWnd, RIGHT, 200, NULL);
-
-			else if (Sy > Ey && abs(Sx - Ex) < abs(Sy - Ey))
+			}
+			else if (Sy > Ey && abs(Sx - Ex) < abs(Sy - Ey)) {
+				finish = GetTickCount();
+				temp.dir = UP;
+				temp.elapsed_time = finish - start;
+				//replaydata.emplace_back(UP, finish - start);
 				SetTimer(hWnd, UP, 200, NULL);
-
-			else if (Sy < Ey && abs(Sx - Ex) < abs(Sy - Ey))
+			}
+			else if (Sy < Ey && abs(Sx - Ex) < abs(Sy - Ey)) {
+				finish = GetTickCount();
+				temp.dir = DOWN;
+				temp.elapsed_time = finish - start;
+				//replaydata.emplace_back(DOWN, finish - start);
 				SetTimer(hWnd, DOWN, 200, NULL);
+			}
 		}
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
-	case WM_KEYDOWN:
+	/*case WM_KEYDOWN:
 		switch (wParam)
 		{
 		case VK_LEFT:
-			if(Move)
+			if (Move) {
+				finish = GetTickCount();
+				replaydata.emplace_back(LEFT, finish - start);
 				SetTimer(hWnd, LEFT, 200, NULL);
+			}
 			break;
 		case VK_RIGHT:
-			if (Move)
+			if (Move) {
+				finish = GetTickCount();
+				replaydata.emplace_back(RIGHT, finish - start);
 				SetTimer(hWnd, RIGHT, 200, NULL);
+			}
 			break;
 		case VK_UP:
-			if (Move)
+			if (Move) {
+				finish = GetTickCount();
+				replaydata.emplace_back(UP, finish - start);
 				SetTimer(hWnd, UP, 200, NULL);
+			}
 			break;
 		case VK_DOWN:
-			if (Move)
+			if (Move) {
+				finish = GetTickCount();
+				replaydata.emplace_back(DOWN, finish - start);
 				SetTimer(hWnd, DOWN, 200, NULL);
+			}
 			break;
 		default:
 			break;
 		}
-		break;
+		break;*/
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
@@ -237,13 +287,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 					}
 				}
 				out << Score << " " << Goal << " " << Max << endl;
+				start = GetTickCount();
 			}
 			break;
 		}
 		case ID_STOP:	// 리플레이 저장 종료
 			if (Move) {
-
-
+				ofstream out("test.txt", ios::app);
+				for (auto d : replaydata) {
+					out << d.dir << " " << d.elapsed_time << " " << d.random_position[0] << " " << d.random_position[1] << " " << d.block_val << endl;
+				}
 			}
 			break;
 
@@ -307,6 +360,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			++cnt;
 			if (cnt % 3 == 0){
 				MakeBlock();
+				start = GetTickCount();
+				replaydata.emplace_back(temp);
 				KillTimer(hWnd, LEFT);
 				Move = TRUE;
 			}
@@ -330,6 +385,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			++cnt;
 			if (cnt % 3 == 0){
 				MakeBlock();
+				start = GetTickCount();
+				replaydata.emplace_back(temp);
 				KillTimer(hWnd, RIGHT);
 				Move = TRUE;
 			}
@@ -353,6 +410,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			++cnt;
 			if (cnt % 3 == 0){
 				MakeBlock();
+				start = GetTickCount();
+				replaydata.emplace_back(temp);
 				KillTimer(hWnd, UP);
 				Move = TRUE;
 			}
@@ -377,6 +436,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			++cnt;
 			if (cnt % 3 == 0){
 				MakeBlock();
+				start = GetTickCount();
+				replaydata.emplace_back(temp);
 				KillTimer(hWnd, DOWN);
 				Move = TRUE;
 			}
@@ -410,14 +471,23 @@ void NewGame(){
 	MakeBlock();
 }
 void MakeBlock(){
-	int a, b, c;
-	c = rand() % 2 + 1;
-	while (FullCheck()){
-		a = rand() % 4, b = rand() % 4;
-		if (board[a][b].val == 0){
-			board[a][b].val = c * 2;
-			break;
+	if (playing) {
+		int a, b, c;
+		c = rand() % 2 + 1;
+		while (FullCheck()) {
+			a = rand() % 4, b = rand() % 4;
+			if (board[a][b].val == 0) {
+				board[a][b].val = c * 2;
+				temp.random_position[0] = a;
+				temp.random_position[1] = b;
+				temp.block_val = c * 2;
+				break;
+			}
 		}
+	}
+	else {
+		//auto p = replaydata.begin;
+		//board[p.random_posion[0]][p.random_posion[1]].val = 2;
 	}
 }
 bool FullCheck(){
