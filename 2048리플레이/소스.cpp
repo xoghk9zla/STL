@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include <math.h>
-#include <vector>
+#include <list>
 #include <string>
 #include <fstream>
 #include <iterator>
@@ -45,7 +45,7 @@ int Score, Goal, Max;	// 현재 점수, 목표 점수, 최대 도달 블럭
 DWORD start, finish;
 Replay temp;
 bool playing;
-vector<Replay> replaydata;
+list<Replay> replaydata;
 
 void NewGame();
 void MakeBlock();

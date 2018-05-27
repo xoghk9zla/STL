@@ -9,16 +9,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <set>
-#include <vector>
+#include <list>
 #include <iterator>
 
 #include "Model.h"
 #include "save.h"
-
-class Test {
-public:
-	int a[4][4];
-};
 
 using namespace std;
 //
@@ -30,14 +25,21 @@ void main() {
 	int* q = reinterpret_cast<int*>(2000);
 	cout << typeid(cin).name() << endl;
 	//cout << my_distance(p, q) << endl;
-	int a[4][4] = { 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 };
-	vector<Test> temp;
-	temp.emplace_back(a);
+	
+	list<int> v;
+	v.push_back(10);
+	v.push_back(20);
+	v.push_back(30);
 
-	for (auto d : temp)
-		cout << *d.a;
+	list<int>::iterator iter = v.begin();
+	cout << *iter++;
+	cout << *iter--;
+	cout << *iter;
 
-	save();
+
+	
+	
+	//save();
 }
 
 //template<class Iter>
