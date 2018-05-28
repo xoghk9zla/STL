@@ -46,6 +46,8 @@ DWORD start, finish;
 Replay temp;
 bool playing;
 list<Replay> replaydata;
+auto p = replaydata.begin();
+auto q = replaydata.end();
 
 void NewGame();
 void MakeBlock();
@@ -107,6 +109,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			}
 			x1 = 50, y1 += 100;
 		}
+		
 		MakeBlock();
 		MakeBlock();
 		break;
@@ -189,68 +192,68 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				finish = GetTickCount();
 				temp.dir = LEFT;
 				temp.elapsed_time = finish - start;
-				//replaydata.emplace_back(LEFT, finish - start);
 				SetTimer(hWnd, LEFT, 200, NULL);
 			}
 			else if (Sx < Ex && abs(Sx - Ex) > abs(Sy - Ey)) {
 				finish = GetTickCount();
 				temp.dir = RIGHT;
 				temp.elapsed_time = finish - start;
-				//replaydata.emplace_back(RIGHT, finish - start);
 				SetTimer(hWnd, RIGHT, 200, NULL);
 			}
 			else if (Sy > Ey && abs(Sx - Ex) < abs(Sy - Ey)) {
 				finish = GetTickCount();
 				temp.dir = UP;
 				temp.elapsed_time = finish - start;
-				//replaydata.emplace_back(UP, finish - start);
 				SetTimer(hWnd, UP, 200, NULL);
 			}
 			else if (Sy < Ey && abs(Sx - Ex) < abs(Sy - Ey)) {
 				finish = GetTickCount();
 				temp.dir = DOWN;
 				temp.elapsed_time = finish - start;
-				//replaydata.emplace_back(DOWN, finish - start);
 				SetTimer(hWnd, DOWN, 200, NULL);
 			}
 		}
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
-	/*case WM_KEYDOWN:
+	case WM_KEYDOWN:
 		switch (wParam)
 		{
 		case VK_LEFT:
 			if (Move) {
 				finish = GetTickCount();
-				replaydata.emplace_back(LEFT, finish - start);
+				temp.dir = LEFT;
+				temp.elapsed_time = finish - start;
 				SetTimer(hWnd, LEFT, 200, NULL);
 			}
 			break;
 		case VK_RIGHT:
 			if (Move) {
 				finish = GetTickCount();
-				replaydata.emplace_back(RIGHT, finish - start);
+				temp.dir = RIGHT;
+				temp.elapsed_time = finish - start;
 				SetTimer(hWnd, RIGHT, 200, NULL);
 			}
 			break;
 		case VK_UP:
 			if (Move) {
 				finish = GetTickCount();
-				replaydata.emplace_back(UP, finish - start);
+				temp.dir = UP;
+				temp.elapsed_time = finish - start;
 				SetTimer(hWnd, UP, 200, NULL);
 			}
 			break;
 		case VK_DOWN:
 			if (Move) {
 				finish = GetTickCount();
-				replaydata.emplace_back(DOWN, finish - start);
+				temp.dir = DOWN;
+				temp.elapsed_time = finish - start;
 				SetTimer(hWnd, DOWN, 200, NULL);
 			}
 			break;
 		default:
 			break;
 		}
-		break;*/
+		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
@@ -313,6 +316,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				}
 				// 리플레이 저장이 시작 된 점수, 목표점수, 최대 도달 블럭을 가져옴
 				in >> Score >> Goal >> Max;
+				
+				list<Replay> temp;
+				int dir;
+				int elapsed_time;
+				int random_position[2];
+				int block_val;
+				while (!in.eof()) {
+					in >> dir >> elapsed_time >> random_position[0] >> random_position[1] >> block_val;
+					temp.emplace_back(dir, elapsed_time, random_position, block_val);
+				}
+				replaydata = temp;
+				p = replaydata.begin();
+				q = replaydata.end();
+				--q;
+				SetTimer(hWnd, REPLAY, 200, NULL);
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
@@ -325,7 +343,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 		break;
 
 	case WM_TIMER:
-		Move = FALSE;
+		if(wParam != 5)
+			Move = FALSE;
 		for (int i = 0; i < 4; ++i){
 			for (int j = 0; j < 4; ++j){
 				if (board[i][j].val == Goal){
@@ -364,6 +383,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				replaydata.emplace_back(temp);
 				KillTimer(hWnd, LEFT);
 				Move = TRUE;
+				if (p != q) {
+					++p;
+					SetTimer(hWnd, REPLAY, 200, NULL);
+				}
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
@@ -389,6 +412,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				replaydata.emplace_back(temp);
 				KillTimer(hWnd, RIGHT);
 				Move = TRUE;
+				if (p != q) {
+					++p;
+					SetTimer(hWnd, REPLAY, 200, NULL);
+				}
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
@@ -414,6 +441,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				replaydata.emplace_back(temp);
 				KillTimer(hWnd, UP);
 				Move = TRUE;
+				if (p != q) {
+					++p;
+					SetTimer(hWnd, REPLAY, 200, NULL);
+				}
 			}
 
 			InvalidateRect(hWnd, NULL, TRUE);
@@ -440,10 +471,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				replaydata.emplace_back(temp);
 				KillTimer(hWnd, DOWN);
 				Move = TRUE;
+				if (p != q) {
+					++p;
+					SetTimer(hWnd, REPLAY, 200, NULL);
+				}
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
 
+		case REPLAY: {
+			playing = false;
+			DWORD temp = GetTickCount();
+			DWORD time = p->elapsed_time;
+			while (p != q) {
+				if (time -= temp > 0) {
+					SetTimer(hWnd, p->dir, 200, NULL);
+					KillTimer(hWnd, REPLAY);
+					break;
+				}
+			}
+			KillTimer(hWnd, REPLAY);
+			break;
+		}
 		default:
 			break;
 
@@ -486,8 +535,7 @@ void MakeBlock(){
 		}
 	}
 	else {
-		//auto p = replaydata.begin;
-		//board[p.random_posion[0]][p.random_posion[1]].val = 2;
+		board[p->random_position[0]][p->random_position[1]].val = p->block_val;
 	}
 }
 bool FullCheck(){
