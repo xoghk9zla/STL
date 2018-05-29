@@ -97,7 +97,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 	static int x1, y1;	// 판위치 초기화용
 	static int Sx, Sy, Ex, Ey; // 마우스 드래그
 	static int a, b, cnt;	// 블록 생성용, 블럭 이동 횟수
-	static char buf[50];	// 게임 종료 시 현재 점수, 최대 도달 블럭을 출력하기 위한 문자열
+	static char buf[100];	// 게임 종료 시 현재 점수, 최대 도달 블럭을 출력하기 위한 문자열
 	switch (uMsg)
 	{
 	case WM_CREATE:
@@ -110,7 +110,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			}
 			x1 = 50, y1 += 100;
 		}
-		
+		p->dir = 0;
+		p->elapsed_time = 0;
+		p->random_position[0] = 0;
+		p->random_position[1] = 0;
+		p->block_val = 0;
 		MakeBlock();
 		MakeBlock();
 		break;
@@ -161,12 +165,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				DeleteDC(memdc);
 			}
 		}
+		// 점수 텍스트로 출력
+		wsprintf(buf, "┌ㅡㅡㅡㅡ점수판ㅡㅡㅡㅡ┐");
+		TextOut(hdc, 475, 75, buf, strlen(buf));
 		wsprintf(buf, "점수: %d", Score);
 		TextOut(hdc, 500, 100, buf, strlen(buf));
 		wsprintf(buf, "목표 점수: %d", Goal);
 		TextOut(hdc, 500, 125, buf, strlen(buf));
 		wsprintf(buf, "최대 도달 블럭: %d", Max);
 		TextOut(hdc, 500, 150, buf, strlen(buf));
+		wsprintf(buf, "└ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ┘");
+		TextOut(hdc, 475, 175, buf, strlen(buf));
+		// 리플레이 정보를 출력
+		wsprintf(buf, "┌ㅡㅡㅡㅡㅡㅡㅡㅡ리플레이데이터ㅡㅡㅡㅡㅡㅡㅡㅡ┐");
+		TextOut(hdc, 750, 75, buf, strlen(buf));
+		wsprintf(buf, "다음 입력 시간: %d", p->elapsed_time);
+		TextOut(hdc, 775, 100, buf, strlen(buf));
+		wsprintf(buf, "다음 입력 방향(LEFT: 1, RIGHT: 2, UP: 3, DOWN: 4): %d", p->dir);
+		TextOut(hdc, 775, 125, buf, strlen(buf));
+		wsprintf(buf, "다음 블럭 생성 위치: (%d, %d), 생성 값: %d", p->random_position[0], p->random_position[1], p->block_val);
+		TextOut(hdc, 775, 150, buf, strlen(buf));
+		wsprintf(buf, "└ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ┘");
+		TextOut(hdc, 750, 175, buf, strlen(buf));
 		
 		if (LoseCheck()){
 			wsprintf(buf, "점수: %d, 최고 블럭: %d", Score, Max);
