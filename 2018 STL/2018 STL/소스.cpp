@@ -14,17 +14,37 @@
 
 using namespace std;
 
-class myIter {
+// 표준 반복자라면 다섯가지 타입을 정의해야 한다.
+// 사용자가 iterator_traits<내 반복자>::다섯가지 타입을 이용하여 변수를 선언할 수 있다.
+class myIter:public iterator<random_access_iterator_tag, char>{
 	char* p{ nullptr };
 public:
 	myIter(char* p) : p(p){}
 	// 반복자가 해야 할 기본동작을 프로그램 해야 함
-	char operator*(){ return *p; }
+	char& operator*(){ return *p; }
 	bool operator==(const myIter& rhs) const { return p == rhs.p; }
 	bool operator!=(const myIter& rhs) const { return p != rhs.p; }
 	myIter& operator=(const myIter&rhs) { p = rhs.p; return *this; }
 	myIter& operator++() { ++p; return *this; }	// 전위증가
 	myIter operator++(int) { myIter temp = *this; ++p; return temp; }	// 후위증가
+
+	// 랜덤 반복자가 제공하는 연산들
+	int operator-(const myIter&rhs) const { return p - rhs.p; }
+	bool operator<(const myIter&rhs) const { return p < rhs.p; }
+	myIter operator-(int n) const { myIter t(p); t.p -= n; return t; }
+	myIter operator+(int n) const { myIter t(p); t.p += n; return t; }
+	myIter& operator--() { --p; return *this; }	// 전위감소
+	myIter operator--(int) { myIter temp = *this; --p; return temp; }	// 후위감소
+};
+
+class myRevIter :public iterator<random_access_iterator_tag, char> {
+	char* p{ nullptr };
+public:
+	myRevIter(char* p) : p(p) {}
+	char& operator*() { return *(p - 1); }
+	bool operator!=(const myRevIter& rhs) { return p != rhs.p; }
+	myRevIter& operator++() { --p; return *this; }	// 전위증가
+	myRevIter operator++(int) { myRevIter temp = *this; --p; return temp; }	// 후위증가
 };
 
 class myString {
@@ -67,54 +87,41 @@ public:
 	char* c_str() const { return p; }
 	myIter begin() { return myIter(p); }
 	myIter end() { return myIter(p + len); }
+	myRevIter rbegin() { return myRevIter(p + len); }
+	myRevIter rend() { return myRevIter(p); }
 };
 ostream& operator<<(ostream& os, const myString& s) {
 	os << s.p;
 	return os;
 }
-template <class Iter, class Value>
-Iter myFind(Iter begin, Iter end, Value val);
+
+template<class Iter, class Call >
+bool my_all_of(Iter, Iter, Call);
 
 void main() {
-	myString s{ "Hello, world!" };	// char*, char[]를 대치하는 class
-	myString s1 = s;
+	int a[]{ 2,4,6,8,10 };
 
-	cout << s1 << endl;			
+	//모두 짝수인지 검사하시오
+	bool result = my_all_of(begin(a), end(a), [](int n) {
+		return !(n & 1);
+	});
 
-	s += " STL 참 재미있다!";
-	cout << s << endl;
-	cout << s.length() << endl;
-	cout << s.size() << endl;
-
-	char str[40];
-	strcpy(str, s.c_str());
-	cout << str << endl;
-
-	//for (char d : s) {	// 표준 컨테이너라면 이 코드에 문제가 없어야 함
-	//	cout << d << " ";
-	//}
-	//cout << endl;
-
-	auto p = myFind(begin(s), end(s), 'w');
-	cout << typeid(p).name() << endl;
-
-	if (p != s.end())
-		cout << "찾았습니다 - " << *p << "를" << endl;
+	if (result)
+		cout << "모두 짝수 입니다." << endl;
 	else
-		cout << "그런건 없어요 ㅠㅠ" << endl;
-
-	iterator_traits<myIter>::iterator_category c;
-	cout << typeid(c).name();
+		cout << "홀수가 섞여 있습니다." << endl;
 
 	save();
 }
-template <class Iter, class Value>
-Iter myFind(Iter begin, Iter end, Value val) {
-	while (begin != end)
-	{
-		if (*begin == val)
-			return begin;
+template<class Iter, class Call>
+bool my_all_of(Iter begin, Iter end, Call func) {
+
+	if (begin == end)
+		return true;
+	while (begin != end) {
+		if (!func(*begin))
+			return false;
 		++begin;
 	}
-	return end;
+	return true;
 }

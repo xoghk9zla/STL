@@ -48,6 +48,7 @@ bool playing;
 list<Replay> replaydata;
 auto p = replaydata.begin();
 auto q = replaydata.end();
+DWORD temp2;
 
 void NewGame();
 void MakeBlock();
@@ -330,6 +331,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				p = replaydata.begin();
 				q = replaydata.end();
 				--q;
+				temp2 = GetTickCount();
 				SetTimer(hWnd, REPLAY, 200, NULL);
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
@@ -385,6 +387,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				Move = TRUE;
 				if (p != q) {
 					++p;
+					temp2 = GetTickCount();
 					SetTimer(hWnd, REPLAY, 200, NULL);
 				}
 			}
@@ -414,6 +417,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				Move = TRUE;
 				if (p != q) {
 					++p;
+					temp2 = GetTickCount();
 					SetTimer(hWnd, REPLAY, 200, NULL);
 				}
 			}
@@ -443,6 +447,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				Move = TRUE;
 				if (p != q) {
 					++p;
+					temp2 = GetTickCount();
 					SetTimer(hWnd, REPLAY, 200, NULL);
 				}
 			}
@@ -473,6 +478,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 				Move = TRUE;
 				if (p != q) {
 					++p;
+					temp2 = GetTickCount();
 					SetTimer(hWnd, REPLAY, 200, NULL);
 				}
 			}
@@ -481,16 +487,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 
 		case REPLAY: {
 			playing = false;
-			DWORD temp = GetTickCount();
-			DWORD time = p->elapsed_time;
-			while (p != q) {
-				if (time -= temp > 0) {
+			DWORD temp1 = GetTickCount() - temp2;
+			int time = p->elapsed_time;
+			time = time - temp1;
+			if(p != q) {
+				if (time < 0) {
+					time -= temp1;
 					SetTimer(hWnd, p->dir, 200, NULL);
 					KillTimer(hWnd, REPLAY);
 					break;
 				}
+				else {
+					break;
+				}
 			}
-			KillTimer(hWnd, REPLAY);
+			else {
+				KillTimer(hWnd, REPLAY);
+				playing = true;
+			}
 			break;
 		}
 		default:
