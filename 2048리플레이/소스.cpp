@@ -304,7 +304,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 
 		case ID_SAVE: {	// 리플레이 저장 시작
 			if (Move) {
-				ofstream out("test.txt");
+				ofstream out("Replaydata.dat", ios::binary);
+				replaydata.clear();
 				for (int i = 0; i < 4; ++i) {
 					for (int j = 0; j < 4; ++j) {
 						out << board[i][j].val << " ";
@@ -317,7 +318,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 		}
 		case ID_STOP:	// 리플레이 저장 종료
 			if (Move) {
-				ofstream out("test.txt", ios::app);
+				ofstream out("Replaydata.dat", ios::app, ios::binary);
 				for (auto d : replaydata) {
 					out << d.dir << " " << d.elapsed_time << " " << d.random_position[0] << " " << d.random_position[1] << " " << d.block_val << endl;
 				}
@@ -326,7 +327,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 
 		case ID_LOAD: {	// 리플레이 불러와서 실행
 			if (Move) {
-				ifstream in("test.txt");
+				ifstream in("Replaydata.dat", ios::binary);
 				string s;
 				// 파일 입출력으로 가져온 게임 판의 데이터를 int형으로 변환
 				for (int i = 0; i < 4; ++i) {
