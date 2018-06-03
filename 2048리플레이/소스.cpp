@@ -44,7 +44,7 @@ Rect board[4][4];	// 판
 int Score, Goal, Max;	// 현재 점수, 목표 점수, 최대 도달 블럭
 DWORD start, finish;
 Replay temp;
-bool playing;
+bool playing, save_replay;
 list<Replay> replaydata;
 auto p = replaydata.begin();
 auto q = replaydata.end();
@@ -89,7 +89,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	return Message.wParam;
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	HDC hdc, memdc;
 	PAINTSTRUCT ps;
 	static HBITMAP hBitmap, oldBitmap;
@@ -101,9 +101,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 	switch (uMsg)
 	{
 	case WM_CREATE:
-		x1 = 50, y1 = 50, cnt = 0, Score = 0, Goal = 2048, Max = 0, Move = TRUE, playing = TRUE;
-		for (int i = 0; i < 4; ++i){
-			for (int j = 0; j < 4; ++j){
+		x1 = 50, y1 = 50, cnt = 0, Score = 0, Goal = 2048, Max = 0, Move = TRUE, playing = TRUE, save_replay = FALSE;
+		for (int i = 0; i < 4; ++i) {
+			for (int j = 0; j < 4; ++j) {
 				board[i][j].left = x1, board[i][j].top = y1, board[i][j].right = x1 + 100, board[i][j].bottom = y1 + 100;
 				board[i][j].val = 0, board[i][j].sel = FALSE;
 				x1 += 100;
@@ -120,14 +120,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		
-		for (int i = 0; i < 4; ++i){
-			for (int j = 0; j < 4; ++j){
+
+		for (int i = 0; i < 4; ++i) {
+			for (int j = 0; j < 4; ++j) {
 				Rectangle(hdc, board[i][j].left, board[i][j].top, board[i][j].right, board[i][j].bottom);
 			}
 		}
-		for (int i = 0; i < 4; ++i){
-			for (int j = 0; j < 4; ++j){
+		for (int i = 0; i < 4; ++i) {
+			for (int j = 0; j < 4; ++j) {
 				if (Max < board[i][j].val)
 					Max = board[i][j].val;
 
@@ -187,10 +187,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 		TextOut(hdc, 775, 150, buf, strlen(buf));
 		wsprintf(buf, "└ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ┘");
 		TextOut(hdc, 750, 175, buf, strlen(buf));
-		
-		if (LoseCheck()){
+
+		if (LoseCheck()) {
 			wsprintf(buf, "점수: %d, 최고 블럭: %d", Score, Max);
-			if (MessageBox(hWnd, buf, "게임 종료!", MB_OK) == IDOK){
+			if (MessageBox(hWnd, buf, "게임 종료!", MB_OK) == IDOK) {
 				PostQuitMessage(0);
 				return 0;
 			}
@@ -198,14 +198,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_LBUTTONDOWN:
-		if (Move){
+		if (Move) {
 			Sx = LOWORD(lParam);
 			Sy = HIWORD(lParam);
 		}
 		break;
 
 	case WM_LBUTTONUP:
-		if (Move){
+		if (Move) {
 			Ex = LOWORD(lParam);
 			Ey = HIWORD(lParam);
 
@@ -303,57 +303,84 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			break;
 
 		case ID_SAVE: {	// 리플레이 저장 시작
-			if (Move) {
-				ofstream out("Replaydata.dat", ios::binary);
-				replaydata.clear();
-				for (int i = 0; i < 4; ++i) {
-					for (int j = 0; j < 4; ++j) {
-						out << board[i][j].val << " ";
+			if (!save_replay) {
+				if (Move) {
+					save_replay = TRUE;
+					ofstream out("Replaydata.dat", ios::binary);
+					replaydata.clear();
+					for (int i = 0; i < 4; ++i) {
+						for (int j = 0; j < 4; ++j) {
+							out << board[i][j].val << " ";
+						}
 					}
+					out << Score << " " << Goal << " " << Max << endl;
+					start = GetTickCount();
 				}
-				out << Score << " " << Goal << " " << Max << endl;
-				start = GetTickCount();
+			}
+			else {
+				wsprintf(buf, "리플레이 저장 중 입니다.");
+				MessageBox(hWnd, buf, "notice", MB_OK);
 			}
 			break;
 		}
 		case ID_STOP:	// 리플레이 저장 종료
-			if (Move) {
-				ofstream out("Replaydata.dat", ios::app, ios::binary);
-				for (auto d : replaydata) {
-					out << d.dir << " " << d.elapsed_time << " " << d.random_position[0] << " " << d.random_position[1] << " " << d.block_val << endl;
+			if (save_replay) {
+				if (Move) {
+					ofstream out("Replaydata.dat", ios::app, ios::binary);
+					for (auto d : replaydata) {
+						out << d.dir << " " << d.elapsed_time << " " << d.random_position[0] << " " << d.random_position[1] << " " << d.block_val << endl;
+					}
+					save_replay = FALSE;
 				}
+			}
+			else {
+				wsprintf(buf, "리플레이 저장 중이 아닙니다.");
+				MessageBox(hWnd, buf, "notice", MB_OK);
 			}
 			break;
 
 		case ID_LOAD: {	// 리플레이 불러와서 실행
-			if (Move) {
-				ifstream in("Replaydata.dat", ios::binary);
-				string s;
-				// 파일 입출력으로 가져온 게임 판의 데이터를 int형으로 변환
-				for (int i = 0; i < 4; ++i) {
-					for (int j = 0; j < 4; ++j) {
-						in >> s;
-						board[i][j].val = atoi(s.c_str());
+			if (!save_replay) {
+				if (Move) {
+					ifstream in("Replaydata.dat", ios::_Nocreate);
+
+					if (!in.fail()) {
+						string s;
+						// 파일 입출력으로 가져온 게임 판의 데이터를 int형으로 변환
+						for (int i = 0; i < 4; ++i) {
+							for (int j = 0; j < 4; ++j) {
+								in >> s;
+								board[i][j].val = atoi(s.c_str());
+							}
+						}
+						// 리플레이 저장이 시작 된 점수, 목표점수, 최대 도달 블럭을 가져옴
+						in >> Score >> Goal >> Max;
+
+						list<Replay> temp;
+						int dir;
+						int elapsed_time;
+						int random_position[2];
+						int block_val;
+						while (!in.eof()) {
+							in >> dir >> elapsed_time >> random_position[0] >> random_position[1] >> block_val;
+							temp.emplace_back(dir, elapsed_time, random_position, block_val);
+						}
+						replaydata = temp;
+						p = replaydata.begin();
+						q = replaydata.end();
+						--q;
+						temp2 = GetTickCount();
+						SetTimer(hWnd, REPLAY, 200, NULL);
+					}
+					else {
+						wsprintf(buf, "불러올 파일이 없습니다.");
+						MessageBox(hWnd, buf, "notice", MB_OK);
 					}
 				}
-				// 리플레이 저장이 시작 된 점수, 목표점수, 최대 도달 블럭을 가져옴
-				in >> Score >> Goal >> Max;
-				
-				list<Replay> temp;
-				int dir;
-				int elapsed_time;
-				int random_position[2];
-				int block_val;
-				while (!in.eof()) {
-					in >> dir >> elapsed_time >> random_position[0] >> random_position[1] >> block_val;
-					temp.emplace_back(dir, elapsed_time, random_position, block_val);
-				}
-				replaydata = temp;
-				p = replaydata.begin();
-				q = replaydata.end();
-				--q;
-				temp2 = GetTickCount();
-				SetTimer(hWnd, REPLAY, 200, NULL);
+			}
+			else {
+				wsprintf(buf, "리플레이 저장 중 입니다.");
+				MessageBox(hWnd, buf, "notice", MB_OK);
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
 			break;
