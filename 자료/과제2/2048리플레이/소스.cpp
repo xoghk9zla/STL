@@ -10,7 +10,10 @@
 #define RIGHT 2
 #define UP 3
 #define DOWN 4
+
 #define REPLAY 5
+
+#define SPEED 150
 
 using namespace std;
 
@@ -214,25 +217,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = LEFT;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, LEFT, 100, NULL);
+				SetTimer(hWnd, LEFT, SPEED, NULL);
 			}
 			else if (Sx < Ex && abs(Sx - Ex) > abs(Sy - Ey)) {
 				finish = GetTickCount();
 				temp.dir = RIGHT;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, RIGHT, 100, NULL);
+				SetTimer(hWnd, RIGHT, SPEED, NULL);
 			}
 			else if (Sy > Ey && abs(Sx - Ex) < abs(Sy - Ey)) {
 				finish = GetTickCount();
 				temp.dir = UP;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, UP, 100, NULL);
+				SetTimer(hWnd, UP, SPEED, NULL);
 			}
 			else if (Sy < Ey && abs(Sx - Ex) < abs(Sy - Ey)) {
 				finish = GetTickCount();
 				temp.dir = DOWN;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, DOWN, 100, NULL);
+				SetTimer(hWnd, DOWN, SPEED, NULL);
 			}
 		}
 		InvalidateRect(hWnd, NULL, TRUE);
@@ -245,7 +248,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = LEFT;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, LEFT, 100, NULL);
+				SetTimer(hWnd, LEFT, SPEED, NULL);
 			}
 			break;
 		case VK_RIGHT:
@@ -253,7 +256,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = RIGHT;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, RIGHT, 100, NULL);
+				SetTimer(hWnd, RIGHT, SPEED, NULL);
 			}
 			break;
 		case VK_UP:
@@ -261,7 +264,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = UP;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, UP, 100, NULL);
+				SetTimer(hWnd, UP, SPEED, NULL);
 			}
 			break;
 		case VK_DOWN:
@@ -269,7 +272,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = DOWN;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, DOWN, 100, NULL);
+				SetTimer(hWnd, DOWN, SPEED, NULL);
 			}
 			break;
 		default:
@@ -280,7 +283,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		switch (LOWORD(wParam))
 		{
 		case ID_NEW:
-			NewGame();
+			if (playing)
+				NewGame();
 			break;
 
 		case ID_END:
@@ -288,19 +292,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case ID_END_256:
-			Goal = 256;
+			if(playing)
+				Goal = 256;
 			break;
 
 		case ID_END_512:
-			Goal = 512;
+			if (playing)
+				Goal = 512;
 			break;
 
 		case ID_END_1024:
-			Goal = 1024;
+			if (playing)
+				Goal = 1024;
 			break;
 
 		case ID_END_2048:
-			Goal = 2048;
+			if (playing)
+				Goal = 2048;
 			break;
 
 		case ID_SAVE: {	// 리플레이 저장 시작
@@ -372,7 +380,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 						--q;
 						temp2 = GetTickCount();
 						playing = false;
-						SetTimer(hWnd, REPLAY, 100, NULL);
+						SetTimer(hWnd, REPLAY, SPEED, NULL);
 					}
 					else {
 						wsprintf(buf, "불러올 파일이 없습니다.");
@@ -438,7 +446,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				if (p != q) {
 					++p;
 					temp2 = GetTickCount();
-					SetTimer(hWnd, REPLAY, 100, NULL);
+					SetTimer(hWnd, REPLAY, SPEED, NULL);
 				}
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
@@ -468,7 +476,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				if (p != q) {
 					++p;
 					temp2 = GetTickCount();
-					SetTimer(hWnd, REPLAY, 100, NULL);
+					SetTimer(hWnd, REPLAY, SPEED, NULL);
 				}
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
@@ -498,7 +506,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				if (p != q) {
 					++p;
 					temp2 = GetTickCount();
-					SetTimer(hWnd, REPLAY, 100, NULL);
+					SetTimer(hWnd, REPLAY, SPEED, NULL);
 				}
 			}
 
@@ -529,7 +537,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				if (p != q) {
 					++p;
 					temp2 = GetTickCount();
-					SetTimer(hWnd, REPLAY, 100, NULL);
+					SetTimer(hWnd, REPLAY, SPEED, NULL);
 				}
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
@@ -543,7 +551,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			if (p != q) {
 				if (time < 0) {
 					time -= temp1;
-					SetTimer(hWnd, p->dir, 100, NULL);
+					SetTimer(hWnd, p->dir, SPEED, NULL);
 					KillTimer(hWnd, REPLAY);
 					break;
 				}
