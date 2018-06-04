@@ -110,11 +110,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			}
 			x1 = 50, y1 += 100;
 		}
-		p->dir = 0;
-		p->elapsed_time = 0;
-		p->random_position[0] = 0;
-		p->random_position[1] = 0;
-		p->block_val = 0;
 		MakeBlock();
 		MakeBlock();
 		break;
