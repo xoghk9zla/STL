@@ -110,11 +110,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			}
 			x1 = 50, y1 += 100;
 		}
-		p->dir = 0;
-		p->elapsed_time = 0;
-		p->random_position[0] = 0;
-		p->random_position[1] = 0;
-		p->block_val = 0;
 		MakeBlock();
 		MakeBlock();
 		break;
@@ -201,13 +196,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			wsprintf(buf, "└ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ┘");
 			TextOut(hdc, 750, 175, buf, strlen(buf));
 		}
-		if (LoseCheck()) {
-			wsprintf(buf, "점수: %d, 최고 블럭: %d", Score, Max);
-			if (MessageBox(hWnd, buf, "게임 종료!", MB_OK) == IDOK) {
-				PostQuitMessage(0);
-				return 0;
-			}
-		}
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_LBUTTONDOWN:
@@ -226,25 +214,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = LEFT;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, LEFT, 200, NULL);
+				SetTimer(hWnd, LEFT, 100, NULL);
 			}
 			else if (Sx < Ex && abs(Sx - Ex) > abs(Sy - Ey)) {
 				finish = GetTickCount();
 				temp.dir = RIGHT;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, RIGHT, 200, NULL);
+				SetTimer(hWnd, RIGHT, 100, NULL);
 			}
 			else if (Sy > Ey && abs(Sx - Ex) < abs(Sy - Ey)) {
 				finish = GetTickCount();
 				temp.dir = UP;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, UP, 200, NULL);
+				SetTimer(hWnd, UP, 100, NULL);
 			}
 			else if (Sy < Ey && abs(Sx - Ex) < abs(Sy - Ey)) {
 				finish = GetTickCount();
 				temp.dir = DOWN;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, DOWN, 200, NULL);
+				SetTimer(hWnd, DOWN, 100, NULL);
 			}
 		}
 		InvalidateRect(hWnd, NULL, TRUE);
@@ -257,7 +245,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = LEFT;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, LEFT, 200, NULL);
+				SetTimer(hWnd, LEFT, 100, NULL);
 			}
 			break;
 		case VK_RIGHT:
@@ -265,7 +253,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = RIGHT;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, RIGHT, 200, NULL);
+				SetTimer(hWnd, RIGHT, 100, NULL);
 			}
 			break;
 		case VK_UP:
@@ -273,7 +261,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = UP;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, UP, 200, NULL);
+				SetTimer(hWnd, UP, 100, NULL);
 			}
 			break;
 		case VK_DOWN:
@@ -281,7 +269,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				finish = GetTickCount();
 				temp.dir = DOWN;
 				temp.elapsed_time = finish - start;
-				SetTimer(hWnd, DOWN, 200, NULL);
+				SetTimer(hWnd, DOWN, 100, NULL);
 			}
 			break;
 		default:
@@ -384,7 +372,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 						--q;
 						temp2 = GetTickCount();
 						playing = false;
-						SetTimer(hWnd, REPLAY, 200, NULL);
+						SetTimer(hWnd, REPLAY, 100, NULL);
 					}
 					else {
 						wsprintf(buf, "불러올 파일이 없습니다.");
@@ -411,15 +399,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			Move = FALSE;
 		for (int i = 0; i < 4; ++i){
 			for (int j = 0; j < 4; ++j){
-				if (board[i][j].val == Goal){
+				if (board[i][j].val == Goal || LoseCheck()){
 					KillTimer(hWnd, 1);
 					KillTimer(hWnd, 2);
 					KillTimer(hWnd, 3);
 					KillTimer(hWnd, 4);
 					wsprintf(buf, "점수: %d, 최고 블럭: %d", Score, Max);
 					if (MessageBox(hWnd, buf, "게임 종료!", MB_OK) == IDOK){
-						PostQuitMessage(0);
-						return 0;
+						NewGame();
+						InvalidateRect(hWnd, NULL, TRUE);
 					}
 				}
 			}
@@ -450,7 +438,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				if (p != q) {
 					++p;
 					temp2 = GetTickCount();
-					SetTimer(hWnd, REPLAY, 200, NULL);
+					SetTimer(hWnd, REPLAY, 100, NULL);
 				}
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
@@ -480,7 +468,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				if (p != q) {
 					++p;
 					temp2 = GetTickCount();
-					SetTimer(hWnd, REPLAY, 200, NULL);
+					SetTimer(hWnd, REPLAY, 100, NULL);
 				}
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
@@ -510,7 +498,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				if (p != q) {
 					++p;
 					temp2 = GetTickCount();
-					SetTimer(hWnd, REPLAY, 200, NULL);
+					SetTimer(hWnd, REPLAY, 100, NULL);
 				}
 			}
 
@@ -541,7 +529,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				if (p != q) {
 					++p;
 					temp2 = GetTickCount();
-					SetTimer(hWnd, REPLAY, 200, NULL);
+					SetTimer(hWnd, REPLAY, 100, NULL);
 				}
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
@@ -555,7 +543,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			if(p != q) {
 				if (time < 0) {
 					time -= temp1;
-					SetTimer(hWnd, p->dir, 200, NULL);
+					SetTimer(hWnd, p->dir, 100, NULL);
 					KillTimer(hWnd, REPLAY);
 					break;
 				}
