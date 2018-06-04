@@ -19,7 +19,7 @@ LPCTSTR lpszClass = "2048";	// 제목
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-struct Rect{
+struct Rect {
 	int left, top, right, bottom, val;
 	bool sel;
 };
@@ -33,7 +33,7 @@ public:
 
 public:
 	Replay() {}
-	Replay(int d, int e, int* r, int v): dir(d), elapsed_time(e), block_val(v){
+	Replay(int d, int e, int* r, int v) : dir(d), elapsed_time(e), block_val(v) {
 		random_position[0] = r[0];
 		random_position[1] = r[1];
 	}
@@ -77,12 +77,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	RegisterClass(&WndClass);
 
 	//윈도우 클래스 이름, 타이틀 이름, 스타일, x좌표, y좌표, 폭, 높이, 부모윈도우 핸들, 메뉴 핸들, 응용 프로그램id, 생성된 윈도우 정보
-	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW, 0, 0, 1200, 700, NULL, (HMENU)NULL, hInstance, NULL); 
+	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW, 0, 0, 1200, 700, NULL, (HMENU)NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
-	while (GetMessage(&Message, 0, 0, 0)){
+	while (GetMessage(&Message, 0, 0, 0)) {
 		TranslateMessage(&Message);
 		DispatchMessage(&Message);
 	}
@@ -395,17 +395,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		break;
 
 	case WM_TIMER:
-		if(wParam != 5)
+		if (wParam != 5)
 			Move = FALSE;
-		for (int i = 0; i < 4; ++i){
-			for (int j = 0; j < 4; ++j){
-				if (board[i][j].val == Goal || LoseCheck()){
+		for (int i = 0; i < 4; ++i) {
+			for (int j = 0; j < 4; ++j) {
+				if (board[i][j].val == Goal || LoseCheck()) {
 					KillTimer(hWnd, 1);
 					KillTimer(hWnd, 2);
 					KillTimer(hWnd, 3);
 					KillTimer(hWnd, 4);
 					wsprintf(buf, "점수: %d, 최고 블럭: %d", Score, Max);
-					if (MessageBox(hWnd, buf, "게임 종료!", MB_OK) == IDOK){
+					if (MessageBox(hWnd, buf, "게임 종료!", MB_OK) == IDOK) {
 						NewGame();
 						InvalidateRect(hWnd, NULL, TRUE);
 					}
@@ -415,13 +415,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		switch (wParam)
 		{
 		case LEFT:
-			for (int i = 0; i < 4; ++i){	// 왼쪽
-				for (int j = 1; j < 4; ++j){
-					if (board[i][j - 1].val == 0){	// 블럭 이동
+			for (int i = 0; i < 4; ++i) {	// 왼쪽
+				for (int j = 1; j < 4; ++j) {
+					if (board[i][j - 1].val == 0) {	// 블럭 이동
 						board[i][j - 1].val = board[i][j].val;
 						board[i][j].val = 0;
 					}
-					if (board[i][j - 1].val == board[i][j].val){	// 블럭 합치기
+					if (board[i][j - 1].val == board[i][j].val) {	// 블럭 합치기
 						board[i][j - 1].val += board[i][j].val;
 						Score += board[i][j].val;
 						board[i][j].val = 0;
@@ -429,7 +429,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				}
 			}
 			++cnt;
-			if (cnt % 3 == 0){
+			if (cnt % 3 == 0) {
 				MakeBlock();
 				start = GetTickCount();
 				replaydata.emplace_back(temp);
@@ -445,13 +445,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case RIGHT:
-			for (int i = 0; i < 4; ++i){	// 오른쪽
-				for (int j = 2; j >= 0; --j){
-					if (board[i][j + 1].val == 0){
+			for (int i = 0; i < 4; ++i) {	// 오른쪽
+				for (int j = 2; j >= 0; --j) {
+					if (board[i][j + 1].val == 0) {
 						board[i][j + 1].val = board[i][j].val;
 						board[i][j].val = 0;
 					}
-					if (board[i][j + 1].val == board[i][j].val){
+					if (board[i][j + 1].val == board[i][j].val) {
 						board[i][j + 1].val += board[i][j].val;
 						Score += board[i][j].val;
 						board[i][j].val = 0;
@@ -459,7 +459,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				}
 			}
 			++cnt;
-			if (cnt % 3 == 0){
+			if (cnt % 3 == 0) {
 				MakeBlock();
 				start = GetTickCount();
 				replaydata.emplace_back(temp);
@@ -475,13 +475,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case UP:
-			for (int j = 0; j < 4; ++j){	// 위쪽
-				for (int i = 1; i < 4; ++i){
-					if (board[i - 1][j].val == 0){
+			for (int j = 0; j < 4; ++j) {	// 위쪽
+				for (int i = 1; i < 4; ++i) {
+					if (board[i - 1][j].val == 0) {
 						board[i - 1][j].val = board[i][j].val;
 						board[i][j].val = 0;
 					}
-					else if (board[i - 1][j].val == board[i][j].val){
+					else if (board[i - 1][j].val == board[i][j].val) {
 						board[i - 1][j].val += board[i][j].val;
 						Score += board[i][j].val;
 						board[i][j].val = 0;
@@ -489,7 +489,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				}
 			}
 			++cnt;
-			if (cnt % 3 == 0){
+			if (cnt % 3 == 0) {
 				MakeBlock();
 				start = GetTickCount();
 				replaydata.emplace_back(temp);
@@ -506,13 +506,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case DOWN:
-			for (int j = 0; j < 4; ++j){	// 아래쪽
-				for (int i = 2; i >= 0; --i){
-					if (board[i + 1][j].val == 0){
+			for (int j = 0; j < 4; ++j) {	// 아래쪽
+				for (int i = 2; i >= 0; --i) {
+					if (board[i + 1][j].val == 0) {
 						board[i + 1][j].val = board[i][j].val;
 						board[i][j].val = 0;
 					}
-					else if (board[i + 1][j].val == board[i][j].val){
+					else if (board[i + 1][j].val == board[i][j].val) {
 						board[i + 1][j].val += board[i][j].val;
 						Score += board[i][j].val;
 						board[i][j].val = 0;
@@ -520,7 +520,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				}
 			}
 			++cnt;
-			if (cnt % 3 == 0){
+			if (cnt % 3 == 0) {
 				MakeBlock();
 				start = GetTickCount();
 				replaydata.emplace_back(temp);
@@ -540,7 +540,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			DWORD temp1 = GetTickCount() - temp2;
 			int time = p->elapsed_time;
 			time = time - temp1;
-			if(p != q) {
+			if (p != q) {
 				if (time < 0) {
 					time -= temp1;
 					SetTimer(hWnd, p->dir, 100, NULL);
@@ -574,9 +574,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void NewGame(){
-	for (int i = 0; i < 4; ++i){
-		for (int j = 0; j < 4; ++j){
+void NewGame() {
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
 			board[i][j].val = 0;
 		}
 	}
@@ -584,7 +584,7 @@ void NewGame(){
 	MakeBlock();
 	MakeBlock();
 }
-void MakeBlock(){
+void MakeBlock() {
 	if (playing) {
 		int a, b, c;
 		c = rand() % 2 + 1;
@@ -603,47 +603,47 @@ void MakeBlock(){
 		board[p->random_position[0]][p->random_position[1]].val = p->block_val;
 	}
 }
-bool FullCheck(){
-	for (int i = 0; i < 4; ++i){
-		for (int j = 0; j < 4; ++j){
+bool FullCheck() {
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
 			if (board[i][j].val == 0)
 				return TRUE;
 		}
 	}
 	return FALSE;
 }
-bool MoveCheck(){
-	for (int i = 0; i < 4; ++i){	// 왼쪽
-		for (int j = 1; j < 4; ++j){
-			if (board[i][j - 1].val == board[i][j].val){	// 블럭 합치기
+bool MoveCheck() {
+	for (int i = 0; i < 4; ++i) {	// 왼쪽
+		for (int j = 1; j < 4; ++j) {
+			if (board[i][j - 1].val == board[i][j].val) {	// 블럭 합치기
 				return TRUE;
 			}
 		}
 	}
-	for (int i = 0; i < 4; ++i){	// 오른쪽
-		for (int j = 2; j >= 0; --j){
-			if (board[i][j + 1].val == board[i][j].val){
+	for (int i = 0; i < 4; ++i) {	// 오른쪽
+		for (int j = 2; j >= 0; --j) {
+			if (board[i][j + 1].val == board[i][j].val) {
 				return TRUE;
 			}
 		}
 	}
-	for (int j = 0; j < 4; ++j){	// 위쪽
-		for (int i = 1; i < 4; ++i){
-			if (board[i - 1][j].val == board[i][j].val){
+	for (int j = 0; j < 4; ++j) {	// 위쪽
+		for (int i = 1; i < 4; ++i) {
+			if (board[i - 1][j].val == board[i][j].val) {
 				return TRUE;
 			}
 		}
 	}
-	for (int j = 0; j < 4; ++j){	// 아래쪽
-		for (int i = 2; i >= 0; --i){
-			if (board[i + 1][j].val == board[i][j].val){
+	for (int j = 0; j < 4; ++j) {	// 아래쪽
+		for (int i = 2; i >= 0; --i) {
+			if (board[i + 1][j].val == board[i][j].val) {
 				return TRUE;
 			}
 		}
 	}
 	return FALSE;
 }
-bool LoseCheck(){
+bool LoseCheck() {
 	if (FullCheck() == FALSE && MoveCheck() == FALSE)
 		return TRUE;
 	else
