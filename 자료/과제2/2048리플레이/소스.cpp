@@ -15,7 +15,7 @@
 using namespace std;
 
 HINSTANCE g_hInst;
-LPCTSTR lpszClass = "2048";	// Á¦¸ñ
+LPCTSTR lpszClass = "2048";	// ì œëª©
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -40,8 +40,8 @@ public:
 
 };
 
-Rect board[4][4];	// ÆÇ
-int Score, Goal, Max;	// ÇöÀç Á¡¼ö, ¸ñÇ¥ Á¡¼ö, ÃÖ´ë µµ´Ş ºí·°
+Rect board[4][4];	// íŒ
+int Score, Goal, Max;	// í˜„ì¬ ì ìˆ˜, ëª©í‘œ ì ìˆ˜, ìµœëŒ€ ë„ë‹¬ ë¸”ëŸ­
 DWORD start, finish;
 Replay temp;
 bool playing, save_replay;
@@ -76,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	RegisterClass(&WndClass);
 
-	//À©µµ¿ì Å¬·¡½º ÀÌ¸§, Å¸ÀÌÆ² ÀÌ¸§, ½ºÅ¸ÀÏ, xÁÂÇ¥, yÁÂÇ¥, Æø, ³ôÀÌ, ºÎ¸ğÀ©µµ¿ì ÇÚµé, ¸Ş´º ÇÚµé, ÀÀ¿ë ÇÁ·Î±×·¥id, »ı¼ºµÈ À©µµ¿ì Á¤º¸
+	//ìœˆë„ìš° í´ë˜ìŠ¤ ì´ë¦„, íƒ€ì´í‹€ ì´ë¦„, ìŠ¤íƒ€ì¼, xì¢Œí‘œ, yì¢Œí‘œ, í­, ë†’ì´, ë¶€ëª¨ìœˆë„ìš° í•¸ë“¤, ë©”ë‰´ í•¸ë“¤, ì‘ìš© í”„ë¡œê·¸ë¨id, ìƒì„±ëœ ìœˆë„ìš° ì •ë³´
 	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW, 0, 0, 1200, 700, NULL, (HMENU)NULL, hInstance, NULL); 
 
 	ShowWindow(hWnd, nCmdShow);
@@ -93,11 +93,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	HDC hdc, memdc;
 	PAINTSTRUCT ps;
 	static HBITMAP hBitmap, oldBitmap;
-	static bool Move;	// ºí·ÏÀÌ ¿òÁ÷ÀÏ ¶§ ¸ø ¸¶¿ì½º ÀÛµ¿ ¸øÇÏ°Ô
-	static int x1, y1;	// ÆÇÀ§Ä¡ ÃÊ±âÈ­¿ë
-	static int Sx, Sy, Ex, Ey; // ¸¶¿ì½º µå·¡±×
-	static int a, b, cnt;	// ºí·Ï »ı¼º¿ë, ºí·° ÀÌµ¿ È½¼ö
-	static char buf[100];	// °ÔÀÓ Á¾·á ½Ã ÇöÀç Á¡¼ö, ÃÖ´ë µµ´Ş ºí·°À» Ãâ·ÂÇÏ±â À§ÇÑ ¹®ÀÚ¿­
+	static bool Move;	// ë¸”ë¡ì´ ì›€ì§ì¼ ë•Œ ëª» ë§ˆìš°ìŠ¤ ì‘ë™ ëª»í•˜ê²Œ
+	static int x1, y1;	// íŒìœ„ì¹˜ ì´ˆê¸°í™”ìš©
+	static int Sx, Sy, Ex, Ey; // ë§ˆìš°ìŠ¤ ë“œë˜ê·¸
+	static int a, b, cnt;	// ë¸”ë¡ ìƒì„±ìš©, ë¸”ëŸ­ ì´ë™ íšŸìˆ˜
+	static char buf[100];	// ê²Œì„ ì¢…ë£Œ ì‹œ í˜„ì¬ ì ìˆ˜, ìµœëŒ€ ë„ë‹¬ ë¸”ëŸ­ì„ ì¶œë ¥í•˜ê¸° ìœ„í•œ ë¬¸ìì—´
 	switch (uMsg)
 	{
 	case WM_CREATE:
@@ -110,11 +110,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			}
 			x1 = 50, y1 += 100;
 		}
-		p->dir = 0;
-		p->elapsed_time = 0;
-		p->random_position[0] = 0;
-		p->random_position[1] = 0;
-		p->block_val = 0;
 		MakeBlock();
 		MakeBlock();
 		break;
@@ -165,45 +160,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				DeleteDC(memdc);
 			}
 		}
-		// Á¡¼ö ÅØ½ºÆ®·Î Ãâ·Â
-		wsprintf(buf, "¦£¤Ñ¤Ñ¤Ñ¤ÑÁ¡¼öÆÇ¤Ñ¤Ñ¤Ñ¤Ñ¦¤");
+		// ì ìˆ˜ í…ìŠ¤íŠ¸ë¡œ ì¶œë ¥
+		wsprintf(buf, "â”Œã…¡ã…¡ã…¡ã…¡ì ìˆ˜íŒã…¡ã…¡ã…¡ã…¡â”");
 		TextOut(hdc, 475, 75, buf, strlen(buf));
-		wsprintf(buf, "Á¡¼ö: %d", Score);
+		wsprintf(buf, "ì ìˆ˜: %d", Score);
 		TextOut(hdc, 500, 100, buf, strlen(buf));
-		wsprintf(buf, "¸ñÇ¥ Á¡¼ö: %d", Goal);
+		wsprintf(buf, "ëª©í‘œ ì ìˆ˜: %d", Goal);
 		TextOut(hdc, 500, 125, buf, strlen(buf));
-		wsprintf(buf, "ÃÖ´ë µµ´Ş ºí·°: %d", Max);
+		wsprintf(buf, "ìµœëŒ€ ë„ë‹¬ ë¸”ëŸ­: %d", Max);
 		TextOut(hdc, 500, 150, buf, strlen(buf));
-		wsprintf(buf, "¦¦¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¦¥");
+		wsprintf(buf, "â””ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡â”˜");
 		TextOut(hdc, 475, 175, buf, strlen(buf));
 		if (!playing) {
-			// ¸®ÇÃ·¹ÀÌ Á¤º¸¸¦ Ãâ·Â
-			wsprintf(buf, "¦£¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¸®ÇÃ·¹ÀÌµ¥ÀÌÅÍ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¦¤");
+			// ë¦¬í”Œë ˆì´ ì •ë³´ë¥¼ ì¶œë ¥
+			wsprintf(buf, "â”Œã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ë¦¬í”Œë ˆì´ë°ì´í„°ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡â”");
 			TextOut(hdc, 750, 75, buf, strlen(buf));
-			wsprintf(buf, "´ÙÀ½ ÀÔ·Â ½Ã°£: %d", p->elapsed_time);
+			wsprintf(buf, "ë‹¤ìŒ ì…ë ¥ ì‹œê°„: %d", p->elapsed_time);
 			TextOut(hdc, 775, 100, buf, strlen(buf));
-			wsprintf(buf, "´ÙÀ½ ÀÔ·Â ¹æÇâ(LEFT: 1, RIGHT: 2, UP: 3, DOWN: 4): %d", p->dir);
+			wsprintf(buf, "ë‹¤ìŒ ì…ë ¥ ë°©í–¥(LEFT: 1, RIGHT: 2, UP: 3, DOWN: 4): %d", p->dir);
 			TextOut(hdc, 775, 125, buf, strlen(buf));
-			wsprintf(buf, "´ÙÀ½ ºí·° »ı¼º À§Ä¡: (%d, %d), »ı¼º °ª: %d", p->random_position[0], p->random_position[1], p->block_val);
+			wsprintf(buf, "ë‹¤ìŒ ë¸”ëŸ­ ìƒì„± ìœ„ì¹˜: (%d, %d), ìƒì„± ê°’: %d", p->random_position[0], p->random_position[1], p->block_val);
 			TextOut(hdc, 775, 150, buf, strlen(buf));
-			wsprintf(buf, "¦¦¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¦¥");
+			wsprintf(buf, "â””ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡â”˜");
 			TextOut(hdc, 750, 175, buf, strlen(buf));
 		}
 		else {
-			wsprintf(buf, "¦£¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¸®ÇÃ·¹ÀÌµ¥ÀÌÅÍ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¦¤");
+			wsprintf(buf, "â”Œã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ë¦¬í”Œë ˆì´ë°ì´í„°ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡â”");
 			TextOut(hdc, 750, 75, buf, strlen(buf));
-			wsprintf(buf, "´ÙÀ½ ÀÔ·Â ½Ã°£: ¾øÀ½");
+			wsprintf(buf, "ë‹¤ìŒ ì…ë ¥ ì‹œê°„: ì—†ìŒ");
 			TextOut(hdc, 775, 100, buf, strlen(buf));
-			wsprintf(buf, "´ÙÀ½ ÀÔ·Â ¹æÇâ(LEFT: 1, RIGHT: 2, UP: 3, DOWN: 4): ¾øÀ½");
+			wsprintf(buf, "ë‹¤ìŒ ì…ë ¥ ë°©í–¥(LEFT: 1, RIGHT: 2, UP: 3, DOWN: 4): ì—†ìŒ");
 			TextOut(hdc, 775, 125, buf, strlen(buf));
-			wsprintf(buf, "´ÙÀ½ ºí·° »ı¼º À§Ä¡: ¾øÀ½, »ı¼º °ª: ¾øÀ½");
+			wsprintf(buf, "ë‹¤ìŒ ë¸”ëŸ­ ìƒì„± ìœ„ì¹˜: ì—†ìŒ, ìƒì„± ê°’: ì—†ìŒ");
 			TextOut(hdc, 775, 150, buf, strlen(buf));
-			wsprintf(buf, "¦¦¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¦¥");
+			wsprintf(buf, "â””ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡â”˜");
 			TextOut(hdc, 750, 175, buf, strlen(buf));
 		}
 		if (LoseCheck()) {
-			wsprintf(buf, "Á¡¼ö: %d, ÃÖ°í ºí·°: %d", Score, Max);
-			if (MessageBox(hWnd, buf, "°ÔÀÓ Á¾·á!", MB_OK) == IDOK) {
+			wsprintf(buf, "ì ìˆ˜: %d, ìµœê³  ë¸”ëŸ­: %d", Score, Max);
+			if (MessageBox(hWnd, buf, "ê²Œì„ ì¢…ë£Œ!", MB_OK) == IDOK) {
 				PostQuitMessage(0);
 				return 0;
 			}
@@ -315,7 +310,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			Goal = 2048;
 			break;
 
-		case ID_SAVE: {	// ¸®ÇÃ·¹ÀÌ ÀúÀå ½ÃÀÛ
+		case ID_SAVE: {	// ë¦¬í”Œë ˆì´ ì €ì¥ ì‹œì‘
 			if (!save_replay) {
 				if (Move) {
 					save_replay = TRUE;
@@ -331,12 +326,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				}
 			}
 			else {
-				wsprintf(buf, "¸®ÇÃ·¹ÀÌ ÀúÀå Áß ÀÔ´Ï´Ù.");
+				wsprintf(buf, "ë¦¬í”Œë ˆì´ ì €ì¥ ì¤‘ ì…ë‹ˆë‹¤.");
 				MessageBox(hWnd, buf, "notice", MB_OK);
 			}
 			break;
 		}
-		case ID_STOP:	// ¸®ÇÃ·¹ÀÌ ÀúÀå Á¾·á
+		case ID_STOP:	// ë¦¬í”Œë ˆì´ ì €ì¥ ì¢…ë£Œ
 			if (save_replay) {
 				if (Move) {
 					ofstream out("Replaydata.dat", ios::app, ios::binary);
@@ -347,26 +342,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				}
 			}
 			else {
-				wsprintf(buf, "¸®ÇÃ·¹ÀÌ ÀúÀå ÁßÀÌ ¾Æ´Õ´Ï´Ù.");
+				wsprintf(buf, "ë¦¬í”Œë ˆì´ ì €ì¥ ì¤‘ì´ ì•„ë‹™ë‹ˆë‹¤.");
 				MessageBox(hWnd, buf, "notice", MB_OK);
 			}
 			break;
 
-		case ID_LOAD: {	// ¸®ÇÃ·¹ÀÌ ºÒ·¯¿Í¼­ ½ÇÇà
+		case ID_LOAD: {	// ë¦¬í”Œë ˆì´ ë¶ˆëŸ¬ì™€ì„œ ì‹¤í–‰
 			if (!save_replay) {
 				if (Move) {
 					ifstream in("Replaydata.dat", ios::_Nocreate);
 
 					if (!in.fail()) {
 						string s;
-						// ÆÄÀÏ ÀÔÃâ·ÂÀ¸·Î °¡Á®¿Â °ÔÀÓ ÆÇÀÇ µ¥ÀÌÅÍ¸¦ intÇüÀ¸·Î º¯È¯
+						// íŒŒì¼ ì…ì¶œë ¥ìœ¼ë¡œ ê°€ì ¸ì˜¨ ê²Œì„ íŒì˜ ë°ì´í„°ë¥¼ intí˜•ìœ¼ë¡œ ë³€í™˜
 						for (int i = 0; i < 4; ++i) {
 							for (int j = 0; j < 4; ++j) {
 								in >> s;
 								board[i][j].val = atoi(s.c_str());
 							}
 						}
-						// ¸®ÇÃ·¹ÀÌ ÀúÀåÀÌ ½ÃÀÛ µÈ Á¡¼ö, ¸ñÇ¥Á¡¼ö, ÃÖ´ë µµ´Ş ºí·°À» °¡Á®¿È
+						// ë¦¬í”Œë ˆì´ ì €ì¥ì´ ì‹œì‘ ëœ ì ìˆ˜, ëª©í‘œì ìˆ˜, ìµœëŒ€ ë„ë‹¬ ë¸”ëŸ­ì„ ê°€ì ¸ì˜´
 						in >> Score >> Goal >> Max;
 
 						list<Replay> temp;
@@ -387,13 +382,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 						SetTimer(hWnd, REPLAY, 200, NULL);
 					}
 					else {
-						wsprintf(buf, "ºÒ·¯¿Ã ÆÄÀÏÀÌ ¾ø½À´Ï´Ù.");
+						wsprintf(buf, "ë¶ˆëŸ¬ì˜¬ íŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤.");
 						MessageBox(hWnd, buf, "notice", MB_OK);
 					}
 				}
 			}
 			else {
-				wsprintf(buf, "¸®ÇÃ·¹ÀÌ ÀúÀå Áß ÀÔ´Ï´Ù.");
+				wsprintf(buf, "ë¦¬í”Œë ˆì´ ì €ì¥ ì¤‘ ì…ë‹ˆë‹¤.");
 				MessageBox(hWnd, buf, "notice", MB_OK);
 			}
 			InvalidateRect(hWnd, NULL, TRUE);
@@ -416,8 +411,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 					KillTimer(hWnd, 2);
 					KillTimer(hWnd, 3);
 					KillTimer(hWnd, 4);
-					wsprintf(buf, "Á¡¼ö: %d, ÃÖ°í ºí·°: %d", Score, Max);
-					if (MessageBox(hWnd, buf, "°ÔÀÓ Á¾·á!", MB_OK) == IDOK){
+					wsprintf(buf, "ì ìˆ˜: %d, ìµœê³  ë¸”ëŸ­: %d", Score, Max);
+					if (MessageBox(hWnd, buf, "ê²Œì„ ì¢…ë£Œ!", MB_OK) == IDOK){
 						PostQuitMessage(0);
 						return 0;
 					}
@@ -427,13 +422,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		switch (wParam)
 		{
 		case LEFT:
-			for (int i = 0; i < 4; ++i){	// ¿ŞÂÊ
+			for (int i = 0; i < 4; ++i){	// ì™¼ìª½
 				for (int j = 1; j < 4; ++j){
-					if (board[i][j - 1].val == 0){	// ºí·° ÀÌµ¿
+					if (board[i][j - 1].val == 0){	// ë¸”ëŸ­ ì´ë™
 						board[i][j - 1].val = board[i][j].val;
 						board[i][j].val = 0;
 					}
-					if (board[i][j - 1].val == board[i][j].val){	// ºí·° ÇÕÄ¡±â
+					if (board[i][j - 1].val == board[i][j].val){	// ë¸”ëŸ­ í•©ì¹˜ê¸°
 						board[i][j - 1].val += board[i][j].val;
 						Score += board[i][j].val;
 						board[i][j].val = 0;
@@ -457,7 +452,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case RIGHT:
-			for (int i = 0; i < 4; ++i){	// ¿À¸¥ÂÊ
+			for (int i = 0; i < 4; ++i){	// ì˜¤ë¥¸ìª½
 				for (int j = 2; j >= 0; --j){
 					if (board[i][j + 1].val == 0){
 						board[i][j + 1].val = board[i][j].val;
@@ -487,7 +482,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case UP:
-			for (int j = 0; j < 4; ++j){	// À§ÂÊ
+			for (int j = 0; j < 4; ++j){	// ìœ„ìª½
 				for (int i = 1; i < 4; ++i){
 					if (board[i - 1][j].val == 0){
 						board[i - 1][j].val = board[i][j].val;
@@ -518,7 +513,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case DOWN:
-			for (int j = 0; j < 4; ++j){	// ¾Æ·¡ÂÊ
+			for (int j = 0; j < 4; ++j){	// ì•„ë˜ìª½
 				for (int i = 2; i >= 0; --i){
 					if (board[i + 1][j].val == 0){
 						board[i + 1][j].val = board[i][j].val;
@@ -625,28 +620,28 @@ bool FullCheck(){
 	return FALSE;
 }
 bool MoveCheck(){
-	for (int i = 0; i < 4; ++i){	// ¿ŞÂÊ
+	for (int i = 0; i < 4; ++i){	// ì™¼ìª½
 		for (int j = 1; j < 4; ++j){
-			if (board[i][j - 1].val == board[i][j].val){	// ºí·° ÇÕÄ¡±â
+			if (board[i][j - 1].val == board[i][j].val){	// ë¸”ëŸ­ í•©ì¹˜ê¸°
 				return TRUE;
 			}
 		}
 	}
-	for (int i = 0; i < 4; ++i){	// ¿À¸¥ÂÊ
+	for (int i = 0; i < 4; ++i){	// ì˜¤ë¥¸ìª½
 		for (int j = 2; j >= 0; --j){
 			if (board[i][j + 1].val == board[i][j].val){
 				return TRUE;
 			}
 		}
 	}
-	for (int j = 0; j < 4; ++j){	// À§ÂÊ
+	for (int j = 0; j < 4; ++j){	// ìœ„ìª½
 		for (int i = 1; i < 4; ++i){
 			if (board[i - 1][j].val == board[i][j].val){
 				return TRUE;
 			}
 		}
 	}
-	for (int j = 0; j < 4; ++j){	// ¾Æ·¡ÂÊ
+	for (int j = 0; j < 4; ++j){	// ì•„ë˜ìª½
 		for (int i = 2; i >= 0; --i){
 			if (board[i + 1][j].val == board[i][j].val){
 				return TRUE;
