@@ -1,7 +1,16 @@
+<<<<<<< HEAD
 ﻿  시험대비.cpp
   코드를 생성하고 있습니다.
   106 of 254 functions (41.7%) were compiled, the rest were copied from previous compilation.
     88 functions were new in current compilation
     26 functions had inline decision re-evaluated but remain unchanged
+=======
+﻿  소스.cpp
+c:\users\xorbs\onedrive - kpu.ac.kr\바탕 화면\github\stl\2018 stl\2018 stl\소스.cpp(70): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  코드를 생성하고 있습니다.
+  28 of 592 functions ( 4.7%) were compiled, the rest were copied from previous compilation.
+    6 functions were new in current compilation
+    22 functions had inline decision re-evaluated but remain unchanged
+>>>>>>> b303a51949e131539582e4f4373c88bca2d0a94c
   코드를 생성했습니다.
   2018 STL.vcxproj -> C:\Users\xorbs\OneDrive\Documents\GitHub\STL\2018 STL\Release\2018 STL.exe
