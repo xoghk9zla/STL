@@ -1,7 +1,7 @@
-﻿  소스.cpp
+﻿  시험대비.cpp
   코드를 생성하고 있습니다.
-  20 of 244 functions ( 8.2%) were compiled, the rest were copied from previous compilation.
-    19 functions were new in current compilation
-    10 functions had inline decision re-evaluated but remain unchanged
+  106 of 254 functions (41.7%) were compiled, the rest were copied from previous compilation.
+    88 functions were new in current compilation
+    26 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  2018 STL.vcxproj -> C:\Users\xorbs\OneDrive - kpu.ac.kr\바탕 화면\GitHub\STL\2018 STL\Release\2018 STL.exe
+  2018 STL.vcxproj -> C:\Users\xorbs\OneDrive\Documents\GitHub\STL\2018 STL\Release\2018 STL.exe
