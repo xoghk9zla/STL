@@ -1,0 +1,15 @@
+#include <iostream>
+#include <fstream>
+#include <iterator>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+	ifstream in("이상한 나라의 앨리스.txt", ios::binary);
+	ofstream out("capital.txt", ios::binary);
+
+	transform(istreambuf_iterator<char>(in), istreambuf_iterator<char>(), ostreambuf_iterator<char>(out), [](char c) {
+		return toupper(c);
+	});
+}	
