@@ -6,7 +6,7 @@
 using namespace std;
 
 int main() {
-	ifstream in("이상한 나라의 앨리스.txt");
+	ifstream in("이상한 나라의 앨리스.txt", ios::binary);
 	int num{ 0 };
 
 	char c;
