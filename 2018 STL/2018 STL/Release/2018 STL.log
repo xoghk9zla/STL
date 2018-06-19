@@ -1,1 +1,14 @@
+<<<<<<< HEAD
 ﻿  2018 STL.vcxproj -> C:\Users\xorbs\OneDrive - kpu.ac.kr\바탕 화면\GitHub\STL\2018 STL\Release\2018 STL.exe
+=======
+﻿  시험대비.cpp
+d:\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\algorithm(906): error C2064: 항은 2개의 인수를 받아들이는 함수로 계산되지 않습니다.
+  c:\users\xorbs\onedrive\documents\github\stl\2018 stl\2018 stl\시험대비.cpp(19): note: 컴파일 중인 함수 템플릿 인스턴스화 '_FwdItHaystack std::search<std::_List_iterator<std::_List_val<std::_List_simple_types<_Ty>>>,std::string>(const _FwdItHaystack,const _FwdItHaystack,const _Searcher &)'에 대한 참조를 확인하십시오.
+          with
+          [
+              _FwdItHaystack=std::_List_iterator<std::_List_val<std::_List_simple_types<std::string>>>,
+              _Ty=std::string,
+              _Searcher=std::string
+          ]
+d:\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\algorithm(906): error C2228: '.first' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+>>>>>>> a4128c55b8e037b241befc9d7c02aa0aa5fc3d59
