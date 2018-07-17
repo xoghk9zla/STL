@@ -1,14 +1,10 @@
-<<<<<<< HEAD
-﻿  2018 STL.vcxproj -> C:\Users\xorbs\OneDrive - kpu.ac.kr\바탕 화면\GitHub\STL\2018 STL\Release\2018 STL.exe
-=======
-﻿  시험대비.cpp
-d:\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\algorithm(906): error C2064: 항은 2개의 인수를 받아들이는 함수로 계산되지 않습니다.
-  c:\users\xorbs\onedrive\documents\github\stl\2018 stl\2018 stl\시험대비.cpp(19): note: 컴파일 중인 함수 템플릿 인스턴스화 '_FwdItHaystack std::search<std::_List_iterator<std::_List_val<std::_List_simple_types<_Ty>>>,std::string>(const _FwdItHaystack,const _FwdItHaystack,const _Searcher &)'에 대한 참조를 확인하십시오.
+﻿  기말고사.cpp
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\algorithm(639): error C2064: 항은 1개의 인수를 받아들이는 함수로 계산되지 않습니다.
+  c:\users\xorbs\onedrive - kpu.ac.kr\바탕 화면\github\stl\2018 stl\2018 stl\기말고사.cpp(16): note: 컴파일 중인 함수 템플릿 인스턴스화 'std::pair<std::ostream_iterator<std::string,char,std::char_traits<char>>,std::ostream_iterator<std::string,char,std::char_traits<char>>> std::partition_copy<std::istream_iterator<std::string,char,std::char_traits<char>,ptrdiff_t>,std::ostream_iterator<std::string,char,std::char_traits<char>>,std::ostream_iterator<std::string,char,std::char_traits<char>>,_InIt>(_InIt,_InIt,_OutIt1,_OutIt2,_Pr)'에 대한 참조를 확인하십시오.
           with
           [
-              _FwdItHaystack=std::_List_iterator<std::_List_val<std::_List_simple_types<std::string>>>,
-              _Ty=std::string,
-              _Searcher=std::string
+              _InIt=std::istream_iterator<std::string,char,std::char_traits<char>,ptrdiff_t>,
+              _OutIt1=std::ostream_iterator<std::string,char,std::char_traits<char>>,
+              _OutIt2=std::ostream_iterator<std::string,char,std::char_traits<char>>,
+              _Pr=std::istream_iterator<std::string,char,std::char_traits<char>,ptrdiff_t>
           ]
-d:\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\algorithm(906): error C2228: '.first' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
->>>>>>> a4128c55b8e037b241befc9d7c02aa0aa5fc3d59

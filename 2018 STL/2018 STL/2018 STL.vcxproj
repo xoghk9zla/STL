@@ -89,7 +89,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="시험대비.cpp" />
+    <ClCompile Include="기말고사.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model.h" />

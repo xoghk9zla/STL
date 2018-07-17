@@ -1,0 +1,59 @@
+// 요소를 수정하지 않는 알고리즘
+// 원소 탐색
+auto p = find(v.begin(),v.end(), 20); // 위치 반환 - 시작, 끝, 값을 인자로 받음
+auto p = find_if(v.begin(), v.end(), pred); // 위치 반환 - 시작, 끝, 함수객체를 받음 while문 활용 하는게 좋아보임
+
+// 요소 개수 세기
+count(v.begin(), v.end(), value);	// 시작부터 끝까지 value의 갯수를 반환
+count_if(v.begin(), v.end() pred);	// 시작부터 끝까지 함수객체의 조건에 만족하는 원소의 갯수를 반환
+
+// 범위 비교
+equal(v1.begin(), v1.end(), v2.begin()); // 두 범위의 상등을 점검하는 알고리즘
+equal(v1.begin(), v1.end(), v2.begin(), v2.end(), pred);
+
+// 범위 안의 범위 검색
+auto p = search(v1.begin(), v1.end(), v2.begin(), v2.end());
+auto p = search(v1.begin(), v1.end(), v2.begin(), v2.end(), pred);
+
+// 요소를 수정하는 알고리즘
+// 요소와 범위의 복사
+copy(v.begin(), v.end(), temp); // 시작부터 끝의 원소를 temp에 복사
+copy_n(v.begin(), n, temp); 	// 시작부터 n개의 원소를 temp에 복사
+copy_if(v.begin(), v.end(), temp, pred); // 시작부터 끝의 원소를 pred에 근거해 temp에 복사 
+
+// 요소와 범위 대체
+replace(v.begin(), v.end(), before, after); // 시작부터 끝에 있는 before값을 after값으로 변경해줌
+replace_if(v.begin(), v.end(), pred, after); // 시작부터 끝에 있는 pred에 근거해 after값으로 변경해줌
+replace_copy(v.begin(), v.end(), temp, before, after); // 시작부터 끝에 있는 before값을 after값으로 변경하여 temp에 저장
+replace_copy_if(v.begin(), v.end(), pred, after); // 시작부터 끝에 있는 pred에 근거해 after값으로 변경하여 temp에 저장
+
+// 원소 제거
+v.erase(v.begin()+3);	// v[3]에 해당하는 원소를 제거
+remove(v.begin(), v.end(), value); // 시작부터 끝까지 value값을 제거
+remove_if(v.begin(), v.end(), pred); // 시작부터 끝까지 pred에 근거해 제거
+
+// 원소 수정하기
+transform(v.begin(), v.end(),temp, pred); // 시작부터 끝까지 pred에 근거해 변환 후 temp에 저장
+transform(v1.begin(), v1.end(), v2.begin(), temp, pred); //?
+
+// 무작위 범위 뒤섞기
+random_shuffle(v.begin(), v.end());
+
+// 분할
+is_partitioned(v.begin(), v.end(), pred);	// 분할이 되어 있는지 점검
+partition(v.begin(), v.end(), pred);	// 범위를 분할하는 알고리즘
+
+// 정렬
+sort(v.begin(),v.end());	// 시작부터 끝위치의 원소들을 정렬해줌
+sort(v.begin(),v.end(), pred);	// pred -> less<자료형>(오름차순), greater<자료형>(내림차순)
+partial_sort(v.begin(), v.begin() + 3, v.end());	// 시작 부터 끝까지 원소들 중에서 v.begin()+3까지의 원소만 정렬
+
+// 이진 검색
+binary_search(v.begin(), v.end(), value); // 
+binary_search(v.begin(), v.end(), value, pred); // 
+lower_bound(v.begin(), v.end(), value);	// 시작부터 끝까지 val보다 작지 않은 첫요소의 위치 반환
+lower_bound(v.b8egin(), v.end(), value, pred);
+upper_bound(v.begin(), v.end(), value);	// 시작부터 끝까지 val보다 큰 첫요소의 위치 반환
+upper_bound(v.begin(), v.end(), value, pred);
+equal_range(v.begin(), v.end(), value);	// lower_bound, upper_bound쌍을 반환
+equal_range(v.begin(), v.end(), value, pred);
